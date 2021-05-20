@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+    <div class="container px-4">
+        <div class="row gx-3">
+            <div class="col">
+                {% if not image %}
+                    <div class="pb-2">
+                        <div class="card" style="width: 40rem;">
+                            {% for post in data %}
+                            <div class="card-body">
+                                <h5 class="card-title"><a href="#">{{ post.title }}</a></h5>
+                                <h6 class="card-subtitle mb-2 mt-1 text-muted">
+                                    <a class="mr-2" href="#">{{ post.author }}</a>
+                                    <small class="text-muted">{{ post.date }}</small>
+                                </h6>
+                                <p class="card-text"><p class="card-text">{{ post.content }}</p></p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-md-8 pb-2">
+                        <div class="card" style="width: 40rem;">
+                            <img src="..." class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title"><a href="#">title</a></h5>
+                                <h6 class="card-subtitle mb-2 mt-1 text-muted">
+                                    <a class="mr-2" href="#">author</a>
+                                    <small class="text-muted">date</small>
+                                </h6>
+                                <p class="card-text"><p class="card-text">content</p></p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col">
+                <div class="pb-2">
+                    <div class="col-6 col-md-7">
+                        <div class="content-section">
+                            <form class="d-flex">
+                                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                                <button class="btn btn-outline-success" type="submit">Search</button>
+                            </form>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </div>
+    
+            
+    </div>
+    </div>
+    
+        
+{% endblock %}
