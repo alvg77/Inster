@@ -97,10 +97,14 @@ def save_picture(form_picture):
 @app.route('/account', methods=['POST', 'GET'])
 @login_required
 def account():
+    if not os.path.exists(os.path.join(app.root_path, 'static/profile_pics', current_user.profile_image)):
+        current_user.profile_image = 'default.jpg'
     form = EditAccountForm()
     if form.validate_on_submit():
         if form.picture.data:
             picture_file = save_picture(form.picture.data)
+            if current_user.profile_image != 'default.jpg':
+                os.remove(os.path.join(app.root_path, 'static/profile_pics', current_user.profile_image))
             current_user.profile_image = picture_file
 
         current_user.username = form.username.data
