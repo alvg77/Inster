@@ -2,7 +2,7 @@
 
 {% block body %}
     <div class="container d-flex justify-content-center">
-        <div class="card p-3 w-50">
+        <div class="card p-3 w-50 border-0">
             <div class="d-flex align-items-center">
                 <div class="image p-3"> 
                     <img src="{{ image_file }}" class="rounded-circle" width="155" height="155" alt="pfp">
@@ -10,18 +10,22 @@
                 <div class="ml-3 w-100">
                     <h4 class="mb-0 mt-0">{{ user.username }}</h4>
                     <h6 class="mt-2 mb-1">Bio</h6>
-                    <p class="border border-primary rounded p-2">Bio content</p>
+                    {% if user.bio %}
+                        <p class="border border-light rounded p-2" style="max-width: 43ch; white-space: pre-wrap;">{{ user.bio }}</p>
+                    {% else %}
+                        <p class="border border-light rounded p-2 text-muted" style="max-width: 43ch;">No bio entered</p>
+                    {% endif %}
                     <div class="p-2 mt-2 bg-primary d-flex justify-content-around rounded text-white stats w-100">
                         <div class=" flex-column"> 
                             <span class="fs-6">Posts:</span> 
-                            <span class="number1">?</span> 
+                            <span class="number1">{{num_of_posts}}</span> 
                         </div>
                         <div class="flex-column"> 
                             <span class="fs-6">Followers:</span> 
                             <span class="number2">?</span> 
                         </div>
                     </div>
-                    {% if not current_user %}
+                    {% if not user %}
                         <div class="button mt-2 d-flex flex-row align-items-center"> 
                             <button class="btn btn-sm btn-outline-primary w-100 m-1">Message</button> 
                             <button class="btn btn-sm btn-outline-primary w-100 m-1">Follow</button> 
@@ -65,6 +69,19 @@
                                 {{ form.email(class="form-control", id="floatingInput", placeholder="John Doe") }}
                             {% endif %}
                             {{ form.email.label(for="floatingInput") }}
+                        </div >
+                        <div class="form-floating mb-3">
+                            {% if form.bio.errors %}
+                                {{ form.bio(class="form-control is-invalid", id="floatingInput", style="width: 43ch", placeholder="John Doe") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.bio.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.bio(class="form-control", id="floatingInput", style="width: 43ch", placeholder="John Doe") }}
+                            {% endif %}
+                            {{ form.bio.label(for="floatingInput") }}
                         </div>
                         <div>
                             {{ form.picture.label(class="form-label") }}
@@ -82,7 +99,56 @@
                     </div>
                 </form>
             </div>
-
+        </div>
+    </div>
+    <div class="d-flex justify-content-center">
+        <div class="card p-3 w-75 mt-3 d-flex justify-content-center">
+            <h2 class="d-flex justify-content-center">Posts</h2>
+                {% for post in user.posts %}
+                    {% if not post.post_image %}
+                        <div class="d-flex justify-content-center">
+                            <div class="card mt-3" style="width: 40rem;">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-1">
+                                            <img class="rounded-circle" style="height: 45px; width: 45px; margin-right: 16px;" src="{{ url_for('static', filename='profile_pics/' + post.author.profile_image) }}" alt="pfp">
+                                        </div>
+                                        <div class="col-9">
+                                            <h6 class="card-subtitle mb-2 mt-1 text-muted">
+                                                <a class="mr-2" href="#">{{ post.author.username }}</a>
+                                                <small class="text-muted">{{ post.date_posted.strftime('%Y/%m/%d') }}</small>
+                                            </h6>
+                                            <h5 class="card-title"><a href="#" style="text-decoration: none; color: black;">{{ post.title }}</a></h5>
+                                            <p class="card-text"><p class="card-text">{{ post.content }}</p></p> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="d-flex justify-content-center">
+                            <div class="card mt-3" style="width: 40rem;">
+                                <img src="{{ url_for('static', filename='post_pics/' + post.post_image) }}" class="card-img-top" alt="...">
+    
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-1">
+                                            <img class="rounded-circle" style="height: 45px; width: 45px; margin-right: 16px;" src="{{ url_for('static', filename='profile_pics/' + post.author.profile_image) }}" alt="pfp">
+                                        </div>
+                                        <div class="col-9">
+                                            <h6 class="card-subtitle mb-2 mt-1 text-muted">
+                                                <a class="mr-2" href="#">{{ post.author.username }}</a>
+                                                <small class="text-muted">{{ post.date_posted.strftime('%Y/%m/%d') }}</small>
+                                            </h6>
+                                            <h5 class="card-title"><a href="#" style="text-decoration: none; color: black;">{{ post.title }}</a></h5>
+                                            <p class="card-text"><p class="card-text">{{ post.content }}</p></p> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
         </div>
     </div>
     

@@ -1,7 +1,7 @@
 from flask_app.models import User
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, ValidationError, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 from flask_login import current_user
 
@@ -29,7 +29,8 @@ class LoginForm(FlaskForm):
 class EditAccountForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=25)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
+    bio = TextAreaField('Bio', validators=[Length(max=200)])
+    picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png', 'jpeg'])])
     submit = SubmitField('Apply changes')
     
     def validate_username(self, username):
@@ -41,3 +42,10 @@ class EditAccountForm(FlaskForm):
         if email.data != current_user.email:
             if User.query.filter_by(email=email.data).first():
                 raise ValidationError("Email unavailable! Please choose a different one.")    
+
+class PostForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired(), Length(min=2, max=25)])
+    image = FileField('Image', validators=[FileAllowed(['jpg', 'png', 'jpeg'])])    
+    content = TextAreaField('Content', validators=[DataRequired(), Length(max=200)])
+    submit = SubmitField('Post')
+

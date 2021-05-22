@@ -12,7 +12,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     profile_image = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
-    # bio = db.Column(db.String(500), nullable=True)
+    bio = db.Column(db.Text, nullable=True)
     posts = db.relationship('Posts', backref='author', lazy=True)
 
     def __repr__(self):
@@ -24,6 +24,7 @@ class Posts(db.Model):
     title = db.Column(db.String(100), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=True)
+    # content = db.Column(db.Text, nullable=False)
     post_image = db.Column(db.String(20), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 

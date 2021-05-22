@@ -1,46 +1,58 @@
 {% extends "layout.html" %}
 
-{% block body %}
 
+{% block body %}
+    
     <div class="container px-4">
         <div class="row gx-3">
             <div class="col">
-                {% if not image %}
-                    <div class="pb-2">
-                        <div class="card" style="width: 40rem;">
-                            {% for post in data %}
+                {% for post in data %}
+                    {% if not post.post_image %}
+                        <div class="card mt-3" style="width: 40rem;">
                             <div class="card-body">
-                                <h5 class="card-title"><a href="#">{{ post.title }}</a></h5>
-                                <h6 class="card-subtitle mb-2 mt-1 text-muted">
-                                    <a class="mr-2" href="#">{{ post.author }}</a>
-                                    <small class="text-muted">{{ post.date }}</small>
-                                </h6>
-                                <p class="card-text"><p class="card-text">{{ post.content }}</p></p>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% else %}
-                    <div class="col-md-8 pb-2">
-                        <div class="card" style="width: 40rem;">
-                            <img src="..." class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title"><a href="#">title</a></h5>
-                                <h6 class="card-subtitle mb-2 mt-1 text-muted">
-                                    <a class="mr-2" href="#">author</a>
-                                    <small class="text-muted">date</small>
-                                </h6>
-                                <p class="card-text"><p class="card-text">content</p></p>
+                                <div class="row">
+                                    <div class="col-1">
+                                        <img class="rounded-circle" style="height: 45px; width: 45px; margin-right: 16px;" src="{{ url_for('static', filename='profile_pics/' + post.author.profile_image) }}" alt="pfp">
+                                    </div>
+                                    <div class="col-9">
+                                        <h6 class="card-subtitle mb-2 mt-1 text-muted">
+                                            <a class="mr-2" href="#">{{ post.author.username }}</a>
+                                            <small class="text-muted">{{ post.date_posted.strftime('%Y/%m/%d') }}</small>
+                                        </h6>
+                                        <h5 class="card-title"><a href="#" style="text-decoration: none; color: black;">{{ post.title }}</a></h5>
+                                        <p class="card-text"><p class="card-text">{{ post.content }}</p></p> 
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% endif %}
+                    {% else %}
+                        <div class="card mt-3" style="width: 40rem;">
+                            <img src="{{ url_for('static', filename='post_pics/' + post.post_image) }}" class="card-img-top" alt="...">
+
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-1">
+                                        <img class="rounded-circle" style="height: 45px; width: 45px; margin-right: 16px;" src="{{ url_for('static', filename='profile_pics/' + post.author.profile_image) }}" alt="pfp">
+                                    </div>
+                                    <div class="col-9">
+                                        <h6 class="card-subtitle mb-2 mt-1 text-muted">
+                                            <a class="mr-2" href="#">{{ post.author.username }}</a>
+                                            <small class="text-muted">{{ post.date_posted.strftime('%Y/%m/%d') }}</small>
+                                        </h6>
+                                        <h5 class="card-title"><a href="#" style="text-decoration: none; color: black;">{{ post.title }}</a></h5>
+                                        <p class="card-text"><p class="card-text">{{ post.content }}</p></p> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
             <div class="col">
                 <div class="pb-2">
                     <div class="col-6 col-md-7">
                         <div class="content-section">
-                            <form class="d-flex">
+                            <form class="d-flex mt-3">
                                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                                 <button class="btn btn-outline-success" type="submit">Search</button>
                             </form>
@@ -51,9 +63,7 @@
         </div>
     </div>
     
-            
-    </div>
-    </div>
+        
     
         
 {% endblock %}

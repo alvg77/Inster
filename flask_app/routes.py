@@ -3,18 +3,10 @@ import secrets
 from PIL import Image
 from flask_app.models import User, Posts 
 from flask import render_template, flash, redirect, url_for, request
-from flask_app.forms import SignupForm, LoginForm, EditAccountForm
+from flask_app.forms import SignupForm, LoginForm, EditAccountForm, PostForm
 from flask_app import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
 
-posts = [
-    {
-        "author": "dasdsa",
-        "title": "Neshto toxic",
-        "date": "06.09.2420",
-        "Content": "asdasdasdashegrqhteh    3   532HGGWEDQW",
-    }
-]
 
 def UserAuth(email, password):
     user = User.query.filter_by(email=email).first()
@@ -33,6 +25,7 @@ def UserSignUp(username, email, password):
 @app.route('/')
 @app.route('/home')
 def home():
+    posts = Posts.query.all()
     return render_template('home.html', title="suffer", data=posts, image=None)
 
 @app.route('/about')
@@ -88,9 +81,7 @@ def save_picture(form_picture):
     size = (155, 155)
     image = Image.open(form_picture)
     image.thumbnail(size)
-    image.save(picture_path)
-    
-    
+    image.save(picture_path)    
     
     return filename
 
@@ -109,12 +100,41 @@ def account():
 
         current_user.username = form.username.data
         current_user.email = form.email.data
+        current_user.bio = form.bio.data
         db.session.commit()
         flash('Account changes have been applied.', category='success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
+        form.bio.data = current_user.bio
         
     image_file = url_for('static', filename='profile_pics/' + current_user.profile_image)
-    return render_template('account.html', user=current_user, image_file=image_file, form=form)
+    return render_template('account.html', user=current_user, image_file=image_file, form=form, num_of_posts=len(current_user.posts))
+
+def save_post_pic(image):
+    random_hex = secrets.token_hex(8)
+    _, extention = os.path.splitext(image.filename)
+    filename = random_hex + extention
+    picture_path = os.path.join(app.root_path, 'static/post_pics', filename)
+
+    image = Image.open(image)
+    image.save(picture_path)    
+    
+    return filename
+
+@app.route('/post/new', methods=['POST', 'GET'])
+@login_required
+def new_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        if form.image.data:
+            filename = save_post_pic(form.image.data)
+        else:
+            filename = None
+        post = Posts(title=form.title.data, content=form.content.data, post_image=filename, user_id=current_user.id)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post has been created!', 'success')
+        return redirect(url_for('home'))
+    return render_template('new_post.html', title='New Post', form=form, user=current_user)
