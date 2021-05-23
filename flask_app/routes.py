@@ -2,7 +2,7 @@ import os
 import secrets
 from PIL import Image
 from flask_app.models import User, Posts 
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, abort
 from flask_app.forms import SignupForm, LoginForm, EditAccountForm, PostForm
 from flask_app import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
@@ -26,6 +26,7 @@ def UserSignUp(username, email, password):
 @app.route('/home')
 def home():
     posts = Posts.query.all()
+        
     return render_template('home.html', title="suffer", data=posts, image=None)
 
 @app.route('/about')
@@ -137,4 +138,51 @@ def new_post():
         db.session.commit()
         flash('Your post has been created!', 'success')
         return redirect(url_for('home'))
-    return render_template('new_post.html', title='New Post', form=form, user=current_user)
+    return render_template('new_post.html', title='New Post', form=form, user=current_user, header='New Post', post=None)
+
+@app.route("/post/<int:post_id>")
+def post(post_id):
+    post = Posts.query.get_or_404(post_id)
+    
+    return render_template('post.html', title=post.title, post=post)
+
+@app.route('/post/<int:post_id>/update', methods=['POST', 'GET'])
+@login_required
+def update_post(post_id):
+    post = Posts.query.get_or_404(post_id)
+    if post.author != current_user:
+        abort(403)
+    form = PostForm()
+    form.title.data = post.title
+    form.content.data = post.content
+    
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.content = form.content.data
+
+        if form.image.data:
+            print(post.post_image)
+            filename = save_post_pic(form.image.data)
+            os.remove(os.path.join(app.root_path, 'static/post_pics', post.post_image))
+            post.post_image = filename
+        elif post.post_image == 'removed':
+            print(post.post_image)
+            post.post_image = None
+        print(post.post_image)
+        db.session.commit()
+        
+        return redirect(url_for('home'))
+    else:       
+        form.title.data = post.title
+        form.content.data = post.content
+    return render_template('new_post.html', title='Update Post', form=form, user=current_user, header='Update Post', post=post)
+
+@app.route('/post/<int:post_id>/update/delete_img', methods=['POST', 'GET'])
+def delete_img(post_id):
+    post = Posts.query.get_or_404(post_id)
+    picture_path = os.path.join(app.root_path, 'static/post_pics', post.post_image)
+    os.remove(picture_path)
+    post.post_image = 'removed'
+    db.session.commit()
+    
+    return redirect(url_for('update_post', post_id=post_id))

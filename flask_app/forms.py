@@ -47,5 +47,6 @@ class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(min=2, max=25)])
     image = FileField('Image', validators=[FileAllowed(['jpg', 'png', 'jpeg'])])    
     content = TextAreaField('Content', validators=[DataRequired(), Length(max=200)])
+    remove_img = SubmitField('Remove')
     submit = SubmitField('Post')
 
