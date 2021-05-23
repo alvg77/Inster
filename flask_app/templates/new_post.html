@@ -26,7 +26,7 @@
                     placeholder="John Doe") }}
                     <div class="invalid-feedback">
                         {% for error in form.content.errors %}
-                        <span>{{ error }}</span>
+                            <span>{{ error }}</span>
                         {% endfor %}
                     </div>
                     {% else %}
@@ -38,8 +38,8 @@
                 <div class="mt-3" id=image>
                     {{ form.image.label(class="form-label") }}
                     {% if post and post.post_image %}
-                            <h1>asd</h1>
-                            {{ form.remove_img(class="btn btn-primary", form='form2') }}
+                        <br>{{ form.remove_img(class="btn btn-primary mb-2", form='form2') }}
+                        <br><img alt="..." src="{{ url_for('static', filename='post_pics/' + post.post_image) }}" >
                     {% endif %}
                     {{ form.image(class="form-control", type="file", id="formFile") }}
                     {% if form.image.errors %}
