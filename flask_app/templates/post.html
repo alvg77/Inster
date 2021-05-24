@@ -1,36 +1,80 @@
 {% extends "layout.html" %}
 {% block body%}
     
-        <div class="d-flex justify-content-center">
-            <div class="card mt-3 w-50">
-                {% if post.post_image %}
-                    <img src="{{ url_for('static', filename='post_pics/' + post.post_image) }}" class="card-img-top" alt="...">
-                {% endif %}
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-1 ml-lg-1">
-                            <img class="rounded-circle" style="height: 55px; width: 55px;" src="{{ url_for('static', filename='profile_pics/' + post.author.profile_image) }}" alt="pfp">
-                        </div>
-                        <div class="col-9 m-2">
-                            <h6 class="card-subtitle m-2 text-muted">
-                                <a class="mr-3" href="#">{{ post.author.username }}</a>
-                                <small class="text-muted">{{ post.date_posted.strftime('%Y/%m/%d') }}</small>
-                            </h6>
-                            <h3 class="card-title">{{ post.title }}</h3>
-                            <p class="card-text"><p class="card-text">{{ post.content }}</p></p> 
+    <div class="d-flex justify-content-center">
+        <div class="card mt-3 w-50">
+            {% if post.post_image %}
+                <img src="{{ url_for('static', filename='post_pics/' + post.post_image) }}" class="card-img-top" alt="...">
+            {% endif %}
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-1 ml-lg-1">
+                        <img class="rounded-circle" style="height: 55px; width: 55px;" src="{{ url_for('static', filename='profile_pics/' + post.author.profile_image) }}" alt="pfp">
+                    </div>
+                    <div class="col-9 m-2">
+                        <h6 class="card-subtitle m-2 text-muted">
+                            <a class="mr-3" href="#">{{ post.author.username }}</a>
+                            <small class="text-muted">{{ post.date_posted.strftime('%Y/%m/%d') }}</small>
+                        </h6>
+                        <h3 class="card-title">{{ post.title }}</h3>
+                        <p class="card-text"><p class="card-text">{{ post.content }}</p></p> 
 
-                            {% if post.author == user %}
-                                <div>
-                                    <a href="{{ url_for('update_post', post_id=post.id) }}" class="btn btn-success btn-sm m-1">Update</a>
-                                    <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
-                                </div>
-                            {% endif %} 
-                        </div>
+                        {% if post.author == user %}
+                            <div>
+                                <a href="{{ url_for('update_post', post_id=post.id) }}" class="btn btn-success btn-sm m-1">Update</a>
+                                <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                            </div>
+                        {% endif %} 
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="d-flex justify-content-center">
+    <form id='form1' method="POST" class="mt-5 w-50" action="" enctype="multipart/form-data">
 
+                {{ form.hidden_tag() }}
+                
+                    <div class="form-floating mb-1">
+                        {% if form.content.errors %}
+                        {{ form.content(class="form-control is-invalid", id="floatingInput", placeholder="John Doe") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.content.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ form.content(class="form-control", id="floatingInput", placeholder="John Doe") }}
+                        {% endif %}
+                        {{ form.content.label(for="floatingInput") }}
+                    </div>
+
+                    <div class="mt-1 mb-3">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+
+    </form>
+</div>
+    {% for comment in post.comments %}
+        <div class="d-flex justify-content-center">
+            <div class="card border-primary mt-3 w-50 mb-3">
+                <div class="card-header">
+                    <h5 class="card-title"><a href="{{ url_for('user', user_id=comment.user_id) }}">{{ comment.author.username }}</a></h5>
+                    <small class="text-muted">{{ comment.date_posted.strftime('%Y/%m/%d') }}</small>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ comment.content }}</p>
+                    {% if comment.author == user %}
+                        <div>
+                            <a href="{{ url_for('update_post', post_id=post.id) }}" class="btn btn-success btn-sm m-1">Update</a>
+                            <a href="{{ url_for('delete_comment', post_id=post.id, comment_id=comment.id)}}" class="btn btn-danger btn-sm m-1">Delete</a>
+                        </div>
+                    {% endif %} 
+                </div>
+            </div>
+        </div>
+
+    {% endfor %}
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">

@@ -19,6 +19,8 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     bio = db.Column(db.Text, nullable=True)
     posts = db.relationship('Posts', backref='author', lazy=True)
+    comments = db.relationship('Comments', backref='author', lazy=True)
+        
     followed = db.relationship(
         'User', secondary=followers,
         primaryjoin=(followers.c.follower_id == id),
@@ -47,8 +49,19 @@ class Posts(db.Model):
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
     post_image = db.Column(db.String(20), nullable=True)
+    comments = db.relationship('Comments', backref='post', lazy=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
+    
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
     
+class Comments(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)
+    
+    def __repr__(self):
+        return f"Comment('{self.id}', '{self.user_id}')"

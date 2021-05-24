@@ -120,10 +120,10 @@
                                     </div>
                                     <div class="col-9 m-2">
                                         <h6 class="card-subtitle m-2 text-muted">
-                                            <a class="mr-3" href="#">{{ post.author.username }}</a>
+                                            <p class="mr-3">{{ post.author.username }}</p>
                                             <small class="text-muted">{{ post.date_posted.strftime('%Y/%m/%d') }}</small>
                                         </h6>
-                                        <h3 class="card-title">{{ post.title }}</h3>
+                                        <h3 class="card-title"><a href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h3>
                                         <p class="card-text"><p class="card-text">{{ post.content }}</p></p> 
                                     </div>
                                 </div>

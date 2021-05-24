@@ -1,9 +1,9 @@
 import os
 import secrets
 from PIL import Image
-from flask_app.models import User, Posts 
+from flask_app.models import User, Posts, Comments
 from flask import render_template, flash, redirect, url_for, request, abort
-from flask_app.forms import SignupForm, LoginForm, EditAccountForm, PostForm
+from flask_app.forms import SignupForm, LoginForm, EditAccountForm, PostForm, CommentsForm
 from flask_app import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -138,11 +138,18 @@ def new_post():
         return redirect(url_for('home'))
     return render_template('new_post.html', title='New Post', form=form, user=current_user, header='New Post', post=None)
 
-@app.route("/post/<int:post_id>")
+@app.route("/post/<int:post_id>", methods=['POST', 'GET'])
 def post(post_id):
     post = Posts.query.get_or_404(post_id)
-    
-    return render_template('post.html', title=post.title, post=post, user=current_user)
+    form = CommentsForm()
+    if form.validate_on_submit():
+        comment = Comments(content=form.content.data, user_id=current_user.id, post_id=post.id)
+        db.session.add(comment)
+        db.session.commit()
+        flash('Comment successfully created!', 'success')
+        return redirect(url_for('post', post_id=post.id))
+        
+    return render_template('post.html', title=post.title, post=post, user=current_user, form=form)
 
 @app.route('/post/<int:post_id>/update', methods=['POST', 'GET'])
 @login_required
@@ -198,7 +205,10 @@ def delete_post(post_id):
     if post.post_image:
         picture_path = os.path.join(app.root_path, 'static/post_pics', post.post_image)
         os.remove(picture_path)
-    post.delete()
+    for i in post.comments:
+        db.session.delete(i)
+    
+    db.session.delete(post)
     db.session.commit()
     flash("Post successfully deleted!", "success")
     
@@ -211,3 +221,14 @@ def user(user_id):
         return redirect(url_for('account'))
     
     return render_template('account.html', current_user=current_user, user=user, image_file=user.profile_image, num_of_posts=len(user.posts))
+
+@app.route('/post/<int:post_id>/comment/<int:comment_id>/delete')
+def delete_comment(post_id, comment_id):
+    comment = Comments.query.get_or_404(comment_id)
+    if comment.author != current_user:
+        abort(403)
+    db.session.delete(comment)
+    db.session.commit()
+    flash('Comment successfully deleted!', 'success')
+    
+    return redirect(url_for('post', post_id=post_id))

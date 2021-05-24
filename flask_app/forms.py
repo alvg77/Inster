@@ -50,3 +50,6 @@ class PostForm(FlaskForm):
     remove_img = SubmitField('Remove')
     submit = SubmitField('Post')
 
+class CommentsForm(FlaskForm):
+    content = TextAreaField('Content', validators=[DataRequired(), Length(max=200)])
+    submit = SubmitField('Post')
