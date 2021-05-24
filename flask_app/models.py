@@ -36,8 +36,12 @@ class User(db.Model, UserMixin):
             self.followed.remove(user)
 
     def is_following(self, user):
-        return self.followed.filter(
-            followers.c.followed_id == user.id).count() > 0
+        return self.followed.filter(followers.c.followed_id == user.id).count() > 0
+    
+    def followed_posts(self):
+        return Posts.query.join(
+            followers, (followers.c.followed_id == Posts.user_id)).filter(
+                followers.c.follower_id == self.id).order_by(Posts.date_posted.desc())
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.profile_image}')"
@@ -51,7 +55,6 @@ class Posts(db.Model):
     post_image = db.Column(db.String(20), nullable=True)
     comments = db.relationship('Comments', backref='post', lazy=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
     
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"

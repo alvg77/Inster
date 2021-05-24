@@ -22,13 +22,27 @@
                         </div>
                         <div class="flex-column"> 
                             <span class="fs-6">Followers:</span> 
-                            <span class="number2">?</span> 
+                            <span class="number2">{{ user.followers.count() }}</span> 
+                        </div>
+                        <div class="flex-column"> 
+                            <span class="fs-6">Following:</span> 
+                            <span class="number2">{{ user.followed.count() }}</span> 
                         </div>
                     </div>
                     {% if not user == current_user %}
                         <div class="button mt-2 d-flex flex-row align-items-center"> 
                             <button class="btn btn-sm btn-outline-primary w-100 m-1">Message</button> 
-                            <button class="btn btn-sm btn-outline-primary w-100 m-1">Follow</button> 
+                            {% if not current_user.is_following(user) %}
+                                <form class="w-100" action="{{ url_for('follow', user_username=user.username) }}" method="POST">
+                                    {{ form.hidden_tag() }}
+                                    {{ form.submit(value='Follow', class='btn btn-outline-primary w-100 btn-sm ') }}
+                                </form>
+                            {% else %}
+                                <form class="w-100" action="{{ url_for('unfollow', user_username=user.username) }}" method="POST">
+                                    {{ form.hidden_tag() }}
+                                    {{ form.submit(value='Unfollow', class='btn btn-outline-danger w-100 m-1 btn-sm ') }}
+                                </form>
+                            {% endif %}
                         </div>
                     {% else %}
                         <a class="btn btn-primary w-100 mt-2" data-toggle="collapse" href="#edit-info" role="button" aria-expanded="false" aria-controls="collapseExample">

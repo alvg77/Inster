@@ -3,7 +3,7 @@ import secrets
 from PIL import Image
 from flask_app.models import User, Posts, Comments
 from flask import render_template, flash, redirect, url_for, request, abort
-from flask_app.forms import SignupForm, LoginForm, EditAccountForm, PostForm, CommentsForm
+from flask_app.forms import SignupForm, LoginForm, EditAccountForm, PostForm, CommentsForm, FollowForm
 from flask_app import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -25,8 +25,10 @@ def UserSignUp(username, email, password):
 @app.route('/home')
 def home():
     page = request.args.get('page', 1, type=int)
-    posts = Posts.query.order_by(Posts.date_posted.desc()).paginate(page=page, per_page=8)
-        
+    if current_user.is_authenticated:
+        posts = current_user.followed_posts().paginate(page=page, per_page=8)
+    else:
+        posts = None
     return render_template('home.html',  title="suffer", data=posts)
 
 @app.route('/about')
@@ -220,7 +222,9 @@ def user(user_id):
     if user == current_user:
         return redirect(url_for('account'))
     
-    return render_template('account.html', current_user=current_user, user=user, image_file=user.profile_image, num_of_posts=len(user.posts))
+    form = FollowForm()
+    
+    return render_template('account.html', current_user=current_user, user=user, image_file=user.profile_image, num_of_posts=len(user.posts), form=form)
 
 @app.route('/post/<int:post_id>/comment/<int:comment_id>/delete')
 def delete_comment(post_id, comment_id):
@@ -232,3 +236,43 @@ def delete_comment(post_id, comment_id):
     flash('Comment successfully deleted!', 'success')
     
     return redirect(url_for('post', post_id=post_id))
+
+@app.route('/follow/<user_username>', methods=['POST', 'GET'])
+@login_required
+def follow(user_username):
+    form = FollowForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=user_username).first()
+        if user == None:
+            flash(f"User {user_username} doesn't exist.", 'info')
+            return redirect(url_for('home'))
+        if user == current_user:
+            flash('You cannot follow yourself!', 'danger')
+            return redirect(url_for('account'))
+        current_user.follow(user)
+        db.session.commit()
+        flash(f'You are now following {user.username}.', 'info')
+        return redirect(url_for('user', user_id=user.id))
+    else:
+        return redirect(url_for('home'))
+
+
+@app.route('/unfollow/<user_username>', methods=['POST', 'GET'])
+@login_required
+def unfollow(user_username):
+    form = FollowForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=user_username).first()
+        if user == None:
+            flash(f"User {user_username} doesn't exist.", 'info')
+            return redirect(url_for('home'))
+        if user == current_user:
+            flash('You cannot unfollow yourself!', 'danger')
+            return redirect(url_for('account'))
+        current_user.unfollow(user)
+        db.session.commit()
+        flash(f'You have unfollowed user {user.username}.', 'info')
+        
+        return redirect(url_for('user', user_id=user.id))
+    else:
+        return redirect(url_for('home'))

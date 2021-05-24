@@ -13,7 +13,7 @@
                     </div>
                     <div class="col-9 m-2">
                         <h6 class="card-subtitle m-2 text-muted">
-                            <a class="mr-3" href="#">{{ post.author.username }}</a>
+                            <a class="mr-3" href="{{ url_for('user', user_id=post.author.id) }}">{{ post.author.username }}</a>
                             <small class="text-muted">{{ post.date_posted.strftime('%Y/%m/%d') }}</small>
                         </h6>
                         <h3 class="card-title">{{ post.title }}</h3>
