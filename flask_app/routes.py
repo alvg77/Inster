@@ -4,12 +4,10 @@ from PIL import Image
 from flask_app.models import User, Posts, Comments
 from flask import render_template, flash, redirect, url_for, request, abort
 from flask_app.forms import (SignupForm, LoginForm, EditAccountForm,
-                             PostForm, CommentsForm, FollowForm, RequestResetForm,
-                             ResetPasswordForm, SendMessageForm)
-from flask_app import app, db, bcrypt, mail, socketio
+                             PostForm, CommentsForm, FollowForm, RequestResetForm, ResetPasswordForm)
+from flask_app import app, db, bcrypt, mail
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
-from flask_socketio import send, emit
 
 def UserAuth(email, password):
     user = User.query.filter_by(email=email).first()
@@ -34,18 +32,10 @@ def home():
 
     return render_template('home.html',  title="suffer", data=posts)
 
-@socketio.on('message')
-def message(data):
-    print(f'\n\n\n{data}\n\n')
-    send(data)
-    emit('some_event', 'this is a custom message')
-
 @app.route('/about')
 @login_required
 def about():
-    form = SendMessageForm()
-    
-    return render_template('about.html', form=form)
+    return render_template('about.html')
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():

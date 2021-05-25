@@ -69,7 +69,3 @@ class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=25)])
     confirm = PasswordField('Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
-
-class SendMessageForm(FlaskForm):
-    message = StringField('Email', validators=[DataRequired()])
-    submit = SubmitField('Send')

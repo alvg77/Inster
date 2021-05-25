@@ -2,57 +2,7 @@
 
 {% block body %}
     <div>
-        <div class="d-flex flex-column flex-shrink-0 p-3 text-dark bg-light" style="width: 280px; height: 800px;">
-            <h4 href="/" class="mb-3 text-secondary">Public chat rooms</h4>
-            <ul class="nav nav-pills flex-column mb-auto">
-                <li class="nav-item">
-                <a href="#" class="btn btn-outline-primary w-100 mb-3">
-                    Home
-                </a>
-                </li >
-                <li  class="nav-item">
-                <a href="#" class="btn btn-outline-primary w-100 mb-3">
-                    Dashboard
-                </a>
-                </li>
-                <li  class="nav-item">
-                <a href="#" class="btn btn-outline-primary w-100 mb-3">
-                    Orders
-                </a>
-                </li>
-                <li  class="nav-item">
-                <a href="" class="btn btn-outline-primary w-100 mb-3">
-                    Products
-                </a>
-                </li>
-                <li  class="nav-item">
-                <a href="#" class="btn btn-outline-primary w-100 mb-3">
-                    Customers
-                </a>
-                </li>
-            </ul>
-        </div>
+        <h1>about</h1>
     </div>
-    <div>
-        <p>content</p>
-    </div>
-    <div>
-
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function (){
-            var socket = io.connect('http://' + document.domain + ':' + location.port);
-            socket.on('connect', function() {
-                socket.send('Connected');
-            });
-            socket.on('message', function(data) {
-                console.log(`Message recieved: ${data}`);
-            });
-
-            socket.on('some_event', function(data) {
-                console.log(data);
-            });
-        })
-    </script>
+        
 {% endblock %}
