@@ -4,7 +4,7 @@
     
     <form method="POST" action="">
         <div class="card">
-            <h4 class="card-header">Login</h5>
+            <h4 class="card-header">Log In</h5>
             <div class="card-body">
                 {{ form.hidden_tag() }}
                 <div class="form-floating mb-3">
@@ -42,10 +42,8 @@
                 </div>
                     
                 <div class="mt-4">
-                    <a href="#" >Forgot Password</a>
-                </div>
-                
-                    
+                    <a href="{{ url_for('reset_request') }}" >Forgot Password</a>
+                </div> 
             </div>
         </div>
         <small >Don't have an account? <a href="{{ url_for('signup') }}">Sign Up!</a></small>

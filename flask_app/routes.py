@@ -3,9 +3,13 @@ import secrets
 from PIL import Image
 from flask_app.models import User, Posts, Comments
 from flask import render_template, flash, redirect, url_for, request, abort
-from flask_app.forms import SignupForm, LoginForm, EditAccountForm, PostForm, CommentsForm, FollowForm
-from flask_app import app, db, bcrypt
+from flask_app.forms import (SignupForm, LoginForm, EditAccountForm,
+                             PostForm, CommentsForm, FollowForm, RequestResetForm,
+                             ResetPasswordForm, SendMessageForm)
+from flask_app import app, db, bcrypt, mail, socketio
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_mail import Message
+from flask_socketio import send, emit
 
 def UserAuth(email, password):
     user = User.query.filter_by(email=email).first()
@@ -23,17 +27,25 @@ def UserSignUp(username, email, password):
 
 @app.route('/')
 @app.route('/home')
+@login_required
 def home():
     page = request.args.get('page', 1, type=int)
-    if current_user.is_authenticated:
-        posts = current_user.followed_posts().paginate(page=page, per_page=8)
-    else:
-        posts = None
+    posts = current_user.followed_posts().paginate(page=page, per_page=8)
+
     return render_template('home.html',  title="suffer", data=posts)
 
+@socketio.on('message')
+def message(data):
+    print(f'\n\n\n{data}\n\n')
+    send(data)
+    emit('some_event', 'this is a custom message')
+
 @app.route('/about')
+@login_required
 def about():
-    return render_template('about.html')
+    form = SendMessageForm()
+    
+    return render_template('about.html', form=form)
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -141,6 +153,7 @@ def new_post():
     return render_template('new_post.html', title='New Post', form=form, user=current_user, header='New Post', post=None)
 
 @app.route("/post/<int:post_id>", methods=['POST', 'GET'])
+@login_required
 def post(post_id):
     post = Posts.query.get_or_404(post_id)
     form = CommentsForm()
@@ -276,3 +289,49 @@ def unfollow(user_username):
         return redirect(url_for('user', user_id=user.id))
     else:
         return redirect(url_for('home'))
+
+def send_email_reset(user):
+    token = user.get_reset_token()
+    msg = Message('Password Reset Request', 
+                  sender='noreply@demo.com',
+                  recipients=[user.email])
+    msg.body = f'''To reset your password, visit the following link:
+{url_for('reset_token', token=token, _external=True)}
+
+If it wasn't you who made this password reset request ignore this email and no changes will be made.
+'''
+    mail.send(msg)
+
+@app.route("/reset_password", methods=['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        send_email_reset(user)
+        flash('An email to reset your password has been sent.', 'info')
+        return redirect(url_for('login'))
+        
+    return render_template('request.html', title='Reset Password', form=form)
+
+@app.route("/reset_password/<token>", methods=['GET', 'POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    user = User.verify_reset_token(token)
+    
+    if not user:
+        flash('Token is invalid or expired!', 'warning')
+        return redirect(url_for('reset_request'))
+    
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = password
+        db.session.commit()
+        flash("Your password has been updated!", "success")        
+        
+        return redirect(url_for('login'))
+        
+    return render_template('reset.html', title='Reset Password', form=form)
