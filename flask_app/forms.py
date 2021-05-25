@@ -54,8 +54,8 @@ class CommentsForm(FlaskForm):
     content = TextAreaField('Content', validators=[DataRequired(), Length(max=200)])
     submit = SubmitField('Post')
 
-class FollowForm(FlaskForm):
-    submit = SubmitField('Follow/Unfollow')
+class ActionForm(FlaskForm):
+    submit = SubmitField('Action')
     
 class RequestResetForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])

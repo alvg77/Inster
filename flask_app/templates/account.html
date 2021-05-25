@@ -35,7 +35,7 @@
                             {% if not current_user.is_following(user) %}
                                 <form class="w-100" action="{{ url_for('follow', user_username=user.username) }}" method="POST">
                                     {{ form.hidden_tag() }}
-                                    {{ form.submit(value='Follow', class='btn btn-outline-primary w-100 btn-sm ') }}
+                                    {{ form.submit(value='Follow', class='btn btn-outline-primary w-100 m-1 btn-sm ') }}
                                 </form>
                             {% else %}
                                 <form class="w-100" action="{{ url_for('unfollow', user_username=user.username) }}" method="POST">

@@ -78,7 +78,7 @@ class Posts(db.Model):
     post_image = db.Column(db.String(20), nullable=True)
     comments = db.relationship('Comments', backref='post', lazy=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    likes = db.relationship('Likes', backref='post', lazy='dynamic')
+    likes = db.relationship('Likes', backref='post', lazy=True)
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"

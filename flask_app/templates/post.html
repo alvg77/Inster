@@ -9,7 +9,21 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-1 ml-lg-1">
-                        <img class="rounded-circle" style="height: 55px; width: 55px;" src="{{ url_for('static', filename='profile_pics/' + post.author.profile_image) }}" alt="pfp">
+                        <img class="rounded-circle mb-2" style="height: 55px; width: 55px;" src="{{ url_for('static', filename='profile_pics/' + post.author.profile_image) }}" alt="pfp">
+                        {% if not user.is_liked(post) %}
+                            <form action="{{ url_for('like', post_id=post.id) }}" method="POST">
+                                {{ form.hidden_tag() }}
+                                {{ form.submit(value='Like', class='btn btn-outline-primary btn-sm ') }}
+                                <span class="text-muted d-flex justify-content-center">{{ likes }}</span>
+                            </form>
+                        {% else %}
+                            <form action="{{ url_for('unlike', post_id=post.id) }}" method="POST">
+                                {{ form.hidden_tag() }}
+                                {{ form.submit(value='Unlike', class='btn btn-outline-danger btn-sm ') }}
+                                <span class="text-muted d-flex justify-content-center">{{ likes }}</span>
+
+                            </form>
+                        {% endif %}
                     </div>
                     <div class="col-9 m-2">
                         <h6 class="card-subtitle m-2 text-muted">
@@ -31,30 +45,28 @@
         </div>
     </div>
     <div class="d-flex justify-content-center">
-    <form id='form1' method="POST" class="mt-5 w-50" action="" enctype="multipart/form-data">
-
-                {{ form.hidden_tag() }}
+        <form id='form1' method="POST" class="mt-5 w-50" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
                 
-                    <div class="form-floating mb-1">
-                        {% if form.content.errors %}
-                        {{ form.content(class="form-control is-invalid", id="floatingInput", placeholder="John Doe") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.content.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                        {% else %}
-                        {{ form.content(class="form-control", id="floatingInput", placeholder="John Doe") }}
-                        {% endif %}
-                        {{ form.content.label(for="floatingInput") }}
-                    </div>
+            <div class="form-floating mb-1">
+                {% if form.content.errors %}
+                {{ form.content(class="form-control is-invalid", id="floatingInput", placeholder="John Doe") }}
+                <div class="invalid-feedback">
+                    {% for error in form.content.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.content(class="form-control", id="floatingInput", placeholder="John Doe") }}
+                {% endif %}
+                {{ form.content.label(for="floatingInput") }}
+            </div>
 
-                    <div class="mt-1 mb-3">
-                        {{ form.submit(class="btn btn-primary") }}
-                    </div>
-
-    </form>
-</div>
+            <div class="mt-1 mb-3">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
     {% for comment in post.comments %}
         <div class="d-flex justify-content-center">
             <div class="card border-primary mt-3 w-50 mb-3">

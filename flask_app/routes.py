@@ -4,7 +4,7 @@ from PIL import Image
 from flask_app.models import User, Posts, Comments
 from flask import render_template, flash, redirect, url_for, request, abort
 from flask_app.forms import (SignupForm, LoginForm, EditAccountForm,
-                             PostForm, CommentsForm, FollowForm, RequestResetForm, ResetPasswordForm)
+                             PostForm, CommentsForm, ActionForm, RequestResetForm, ResetPasswordForm)
 from flask_app import app, db, bcrypt, mail
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
@@ -146,6 +146,8 @@ def new_post():
 @login_required
 def post(post_id):
     post = Posts.query.get_or_404(post_id)
+    likes = len(post.likes)
+    print(likes)
     form = CommentsForm()
     if form.validate_on_submit():
         comment = Comments(content=form.content.data, user_id=current_user.id, post_id=post.id)
@@ -154,7 +156,7 @@ def post(post_id):
         flash('Comment successfully created!', 'success')
         return redirect(url_for('post', post_id=post.id))
         
-    return render_template('post.html', title=post.title, post=post, user=current_user, form=form)
+    return render_template('post.html', title=post.title, post=post, user=current_user, form=form, likes=likes)
 
 @app.route('/post/<int:post_id>/update', methods=['POST', 'GET'])
 @login_required
@@ -225,7 +227,7 @@ def user(user_id):
     if user == current_user:
         return redirect(url_for('account'))
     
-    form = FollowForm()
+    form = ActionForm()
     
     return render_template('account.html', current_user=current_user, user=user, image_file=user.profile_image, num_of_posts=len(user.posts), form=form)
 
@@ -243,7 +245,7 @@ def delete_comment(post_id, comment_id):
 @app.route('/follow/<user_username>', methods=['POST', 'GET'])
 @login_required
 def follow(user_username):
-    form = FollowForm()
+    form = ActionForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=user_username).first()
         if user == None:
@@ -263,7 +265,7 @@ def follow(user_username):
 @app.route('/unfollow/<user_username>', methods=['POST', 'GET'])
 @login_required
 def unfollow(user_username):
-    form = FollowForm()
+    form = ActionForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=user_username).first()
         if user == None:
@@ -325,3 +327,29 @@ def reset_token(token):
         return redirect(url_for('login'))
         
     return render_template('reset.html', title='Reset Password', form=form)
+
+@app.route("/post/<int:post_id>/like", methods=['POST'])
+@login_required
+def like(post_id):
+    form = ActionForm()
+    if form.validate_on_submit():
+        post = Posts.query.get_or_404(post_id)
+        current_user.like_post(post)
+        db.session.commit()
+        
+        return redirect(url_for('post', post_id=post_id))
+    else:
+        return redirect(url_for('home'))
+
+@app.route("/post/<int:post_id>/unlike", methods=['POST'])
+@login_required
+def unlike(post_id):
+    form = ActionForm()
+    if form.validate_on_submit():
+        post = Posts.query.get_or_404(post_id)
+        current_user.unlike_post(post)
+        db.session.commit()
+
+        return redirect(url_for('post', post_id=post_id))
+    else:
+        return redirect(url_for('home'))
