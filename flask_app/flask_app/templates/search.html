@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    {% if not data %}
+        <h1 class="text-danger">Search not found!</h1>
+    {% else %}
+        {% for i in data %}
+            {% if type %}
+                <div class="card mt-3" style="width: 45rem;"> 
+                    {% if i.post_image %}
+                        <img src="{{ url_for('static', filename='post_pics/' + i.post_image) }}" class="card-img-top" alt="...">
+                    {% endif %}
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-1">
+                                <img class="rounded-circle" style="height: 55px; width: 55px;" src="{{ url_for('static', filename='profile_pics/' + i.author.profile_image) }}" alt="pfp">                                
+                            </div>
+                            <div class="col-7 m-2">
+                                <h6 class="card-subtitle m-2 text-muted">
+                                    <a class="mr-3" href="{{ url_for('user', user_id=i.author.id) }}">{{ i.author.username }}</a>
+                                    <small class="text-muted">{{ i.date_posted.strftime('%Y/%m/%d') }}</small>
+                                </h6>
+                                <h3 class="card-title"><a href="{{ url_for('post', post_id=i.id) }}">{{ i.title }}</a></h3>
+                                <p class="card-text"><p class="card-text">{{ i.content }}</p></p> 
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+            {% else %}
+                <div class="card mt-3" style="width: 45rem;"> 
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-1">
+                                <img class="rounded-circle" style="height: 55px; width: 55px;" src="{{ url_for('static', filename='profile_pics/' + i.profile_image) }}" alt="pfp">                                
+                            </div>
+                            <div class="col-7 m-2">
+                                <h3 class="card-subtitle m-2 text-muted">
+                                    <a class="mr-3" href="{{ url_for('user', user_id=i.id) }}">{{ i.username }}</a>
+                                </h3>
+                                <p class="card-text"><p class="card-text">{{ i.bio }}</p></p> 
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+        
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <form id='form1' method="POST" class="mt-5 w-100" action="" enctype="multipart/form-data">
+        <div class="card">
+            <h4 class="card-header">{{ header }}</h5>
+            <div class="card-body">
+                {{ form.hidden_tag() }}
+                <div class="form-floating mb-3">
+                    {% if form.title.errors %}
+                    {{ form.title(class="form-control is-invalid", id="floatingInput", placeholder="John Doe") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.title.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ form.title(class="form-control", id="floatingInput", placeholder="John Doe") }}
+                    {% endif %}
+                    {{ form.title.label(for="floatingInput") }}
+                </div>
+                
+                <div class="form-floating mb-3">
+                    {% if form.content.errors %}
+                    {{ form.content(class="form-control is-invalid", id="floatingInput", style="width: 43ch",
+                    placeholder="John Doe") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.content.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ form.content(class="form-control", id="floatingInput", placeholder="John Doe") }}
+                    {% endif %}
+                    {{ form.content.label(for="floatingInput") }}
+                </div>
+                    
+                <div class="mt-3" id=image>
+                    {{ form.image.label(class="form-label") }}
+                    {% if post and post.post_image %}
+                        <br>{{ form.remove_img(class="btn btn-primary mb-2", form='form2') }}
+                        <br><img alt="..." src="{{ url_for('static', filename='post_pics/' + post.post_image) }}" >
+                    {% endif %}
+                    {{ form.image(class="form-control", type="file", id="formFile") }}
+                    {% if form.image.errors %}
+                        {% for error in form.image.errors %}
+                            <span class="text-danger">{{ error }}</span><br>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="mt-3">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </div>
+        </div>
+    </form>
+    {% if post %}
+        <form id='form2' action="{{ url_for('delete_img', post_id=post.id) }}" method="POST"></form>
+    {% endif %}
+{% endblock %}
