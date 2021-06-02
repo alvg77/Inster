@@ -17,13 +17,15 @@
                                     <div class="col-1">
                                         <img class="rounded-circle" style="height: 55px; width: 55px;" src="{{ url_for('static', filename='profile_pics/' + post.author.profile_image) }}" alt="pfp">                                
                                     </div>
-                                    <div class="col-9 m-2">
+                                    <div class="col-7 m-2">
                                         <h6 class="card-subtitle m-2 text-muted">
                                             <a class="mr-3" href="{{ url_for('user', user_id=post.author.id) }}">{{ post.author.username }}</a>
                                             <small class="text-muted">{{ post.date_posted.strftime('%Y/%m/%d') }}</small>
                                         </h6>
                                         <h3 class="card-title"><a href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h3>
-                                        <p class="card-text"><p class="card-text">{{ post.content }}</p></p> 
+                                        <div class="border border-secondary rounded p-2">
+                                            <p class="card-text "><p class="card-text">{{ post.content }}</p></p> 
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -35,9 +37,15 @@
                 <div class="pb-2">
                     <div class="col-6 col-md-7">
                         <div class="content-section">
-                            <form class="d-flex mt-3">
-                                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                                <button class="btn btn-outline-success" type="submit">Search</button>
+                            <form class="d-flex mt-3" method="POST">
+                                {{ form.hidden_tag() }}
+                                <div class="form-floating mb-3">
+                                    {{ form.search(class="form-control me-2", id="floatingInput", placeholder="name@example.com")}}
+                                    {{ form.search.label(value="Search Posts", for="floatingInput", title='Enter post title') }}                                    
+                                </div>
+                                <div>
+                                    {{ form.submit(class="btn btn-outline-success", style="height: 57px;") }}
+                                </div>                            
                             </form>
                         </div>
                     </div> 

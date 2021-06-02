@@ -37,7 +37,11 @@
                                 <h3 class="card-subtitle m-2 text-muted">
                                     <a class="mr-3" href="{{ url_for('user', user_id=i.id) }}">{{ i.username }}</a>
                                 </h3>
-                                <p class="card-text"><p class="card-text">{{ i.bio }}</p></p> 
+                                {% if i.bio %}
+                                    <p class="card-text"><p class="card-text">{{ i.bio }}</p></p> 
+                                {% else %}
+                                    <p class="border border-light rounded p-2 text-muted" style="max-width: 43ch;">No bio entered</p>    
+                                {% endif %}
                             </div>
                         </div>
                     </div>

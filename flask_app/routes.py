@@ -4,7 +4,8 @@ from PIL import Image
 from flask_app.models import User, Posts, Comments
 from flask import render_template, flash, redirect, url_for, request, abort
 from flask_app.forms import (SignupForm, LoginForm, EditAccountForm,
-                             PostForm, CommentsForm, ActionForm, RequestResetForm, ResetPasswordForm)
+                             PostForm, CommentsForm, ActionForm, RequestResetForm, 
+                             ResetPasswordForm, SearchForm)
 from flask_app import app, db, bcrypt, mail
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
@@ -23,19 +24,37 @@ def UserSignUp(username, email, password):
     db.session.add(new_user)
     db.session.commit()         
 
-@app.route('/')
-@app.route('/home')
+@app.route('/', methods=['POST', 'GET'])
 @login_required
 def home():
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(page=page, per_page=8)
+    form = SearchForm()
+    if form.validate_on_submit():        
+        return redirect(url_for('search_post', searched=form.search.data, type=1))
+    
+    return render_template('home.html',  title="Home", data=posts, form=form)
 
-    return render_template('home.html',  title="suffer", data=posts)
-
-@app.route('/about')
+@app.route('/search/<searched>/<int:type>')
 @login_required
-def about():
-    return render_template('about.html')
+def search_post(searched, type):
+    if type:
+        data = Posts.query.whooshee_search(str(searched)).order_by(Posts.id.desc()).all()
+    else:
+        data = User.query.whooshee_search(str(searched)).order_by(User.id.desc()).all()
+        
+    return render_template('search.html', data=data, type=type, title='Search')
+
+@app.route('/people', methods=['POST', 'GET'])
+@login_required
+def people():
+    page = request.args.get('page', 1, type=int)
+    users = current_user.followed.paginate(page=page, per_page=8)
+    
+    form = SearchForm()
+    if form.validate_on_submit():
+        return redirect(url_for('search_post', searched=form.search.data, type=0))
+    return render_template('people.html', users = users, form=form, title='People')
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -113,7 +132,7 @@ def account():
         form.email.data = current_user.email
         form.bio.data = current_user.bio
         
-    return render_template('account.html', current_user=current_user, user=current_user, form=form, num_of_posts=len(current_user.posts))
+    return render_template('account.html', current_user=current_user, user=current_user, form=form, num_of_posts=len(current_user.posts), title=current_user.username)
 
 def save_post_pic(image):
     random_hex = secrets.token_hex(8)
@@ -147,7 +166,6 @@ def new_post():
 def post(post_id):
     post = Posts.query.get_or_404(post_id)
     likes = len(post.likes)
-    print(likes)
     form = CommentsForm()
     if form.validate_on_submit():
         comment = Comments(content=form.content.data, user_id=current_user.id, post_id=post.id)
@@ -229,7 +247,7 @@ def user(user_id):
     
     form = ActionForm()
     
-    return render_template('account.html', current_user=current_user, user=user, image_file=user.profile_image, num_of_posts=len(user.posts), form=form)
+    return render_template('account.html', title=user.username, current_user=current_user, user=user, image_file=user.profile_image, num_of_posts=len(user.posts), form=form)
 
 @app.route('/post/<int:post_id>/comment/<int:comment_id>/delete')
 def delete_comment(post_id, comment_id):

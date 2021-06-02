@@ -1,7 +1,8 @@
 from datetime import datetime
-from flask_app import db, login_manager, app
+from flask_app import db, login_manager, app, whooshee
 from itsdangerous import TimedJSONWebSignatureSerializer as sl
 from flask_login import UserMixin
+from flask_whooshee import AbstractWhoosheer, whoosh
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -12,6 +13,7 @@ followers = db.Table('followers',
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
 
+@whooshee.register_model('username')
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -53,7 +55,7 @@ class User(db.Model, UserMixin):
         return Posts.query.join(
             followers, (followers.c.followed_id == Posts.user_id)).filter(
                 followers.c.follower_id == self.id).order_by(Posts.date_posted.desc())
-
+    
     def like_post(self, post):
         if not self.is_liked(post):
             like = Likes(user_id=self.id, post_id=post.id)
@@ -69,7 +71,7 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.profile_image}')"
 
-
+@whooshee.register_model('title', 'content')
 class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -82,6 +84,55 @@ class Posts(db.Model):
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
+
+@whooshee.register_whoosheer
+class EntryUserWhoosheer(AbstractWhoosheer):
+    # create schema, the unique attribute must be in form of
+    # model.__name__.lower() + '_' + 'id' (name of model primary key)
+    schema = whoosh.fields.Schema(
+        post_id = whoosh.fields.NUMERIC(stored=True, unique=True),
+        user_id = whoosh.fields.NUMERIC(stored=True),
+        username = whoosh.fields.TEXT(),
+        title = whoosh.fields.TEXT(),
+        content = whoosh.fields.TEXT())
+
+    # don't forget to list the included models
+    models = [Posts, User]
+
+    # create insert_* and update_* methods for all models
+    # if you have camel case names like FooBar,
+    # just lowercase them: insert_foobar, update_foobar
+    @classmethod
+    def update_user(cls, writer, user):
+        pass
+
+    @classmethod
+    def update_post(cls, writer, post):
+        writer.update_document(post_id=post.id,
+                               user_id=post.user.id,
+                               username=post.user.name,
+                               title=post.title,
+                               content=post.content)
+
+    @classmethod
+    def insert_user(cls, writer, user):
+        pass  
+
+    @classmethod
+    def insert_post(cls, writer, post):
+        writer.add_document(post_id=post.id,
+                            user_id=post.user.id,
+                            username=post.user.name,
+                            title=post.title,
+                            content=post.content)
+
+    @classmethod
+    def delete_user(cls, writer, user):
+        writer.delete_by_term('user_id', user.id)
+
+    @classmethod
+    def delete_post(cls, writer, post):
+        writer.delete_by_term('post_id', post.id)
     
 class Comments(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -10,35 +10,43 @@
                 <div class="row">
                     <div class="col-1 ml-lg-1">
                         <img class="rounded-circle mb-2" style="height: 55px; width: 55px;" src="{{ url_for('static', filename='profile_pics/' + post.author.profile_image) }}" alt="pfp">
-                        {% if not user.is_liked(post) %}
-                            <form action="{{ url_for('like', post_id=post.id) }}" method="POST">
-                                {{ form.hidden_tag() }}
-                                {{ form.submit(value='Like', class='btn btn-outline-primary btn-sm ') }}
-                                <span class="text-muted d-flex justify-content-center">{{ likes }}</span>
-                            </form>
-                        {% else %}
-                            <form action="{{ url_for('unlike', post_id=post.id) }}" method="POST">
-                                {{ form.hidden_tag() }}
-                                {{ form.submit(value='Unlike', class='btn btn-outline-danger btn-sm ') }}
-                                <span class="text-muted d-flex justify-content-center">{{ likes }}</span>
-
-                            </form>
-                        {% endif %}
+                        
                     </div>
                     <div class="col-9 m-2">
                         <h6 class="card-subtitle m-2 text-muted">
                             <a class="mr-3" href="{{ url_for('user', user_id=post.author.id) }}">{{ post.author.username }}</a>
+                            
                             <small class="text-muted">{{ post.date_posted.strftime('%Y/%m/%d') }}</small>
+                            <div class="mt-2">
+                                {% if not user.is_liked(post) %}
+                                    <form action="{{ url_for('like', post_id=post.id) }}" method="POST" class="d-flex">
+                                        {{ form.hidden_tag() }}
+                                        {{ form.submit(value='Like', class='btn btn-outline-primary btn-sm mr', style='width: 55px') }}
+                                        <span class="text-muted btn p-1 mr-3">{{ likes }}</span>                           
+                                    </form>
+                                {% else %}
+                                    <form action="{{ url_for('unlike', post_id=post.id) }}" method="POST" class="d-flex">
+                                        {{ form.hidden_tag() }}
+                                        {{ form.submit(value='Unlike', class='btn btn-outline-danger btn-sm', style='width: 55px') }}
+                                        <span class="text-muted btn p-1">{{ likes }}</span>                           
+                                    </form>
+                                {% endif %}
+                            </div>  
                         </h6>
-                        <h3 class="card-title">{{ post.title }}</h3>
-                        <p class="card-text"><p class="card-text">{{ post.content }}</p></p> 
-
-                        {% if post.author == user %}
-                            <div>
-                                <a href="{{ url_for('update_post', post_id=post.id) }}" class="btn btn-success btn-sm m-1">Update</a>
-                                <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
-                            </div>
-                        {% endif %} 
+                        <h3><span class="card-title border-dark border-bottom">{{ post.title }}</span></h3>
+                        <div class="border border-secondary rounded-2 p-2">
+                            <p class="card-text "><p class="card-text">{{ post.content }}</p></p> 
+                        </div>
+                        
+                        <div class="d-flex justify-content-right">
+                            {% if post.author == user %}
+                                <div>
+                                    <a href="{{ url_for('update_post', post_id=post.id) }}" class="btn btn-success btn-sm mt-1">Update</a>
+                                    <button type="button" class="btn btn-danger btn-sm mt-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                                </div>
+                            {% endif %}
+                        </div>
+    
                     </div>
                 </div>
             </div>
@@ -77,10 +85,7 @@
                 <div class="card-body">
                     <p class="card-text">{{ comment.content }}</p>
                     {% if comment.author == user %}
-                        <div>
-                            <a href="{{ url_for('update_post', post_id=post.id) }}" class="btn btn-success btn-sm m-1">Update</a>
-                            <a href="{{ url_for('delete_comment', post_id=post.id, comment_id=comment.id)}}" class="btn btn-danger btn-sm m-1">Delete</a>
-                        </div>
+                        <a href="{{ url_for('delete_comment', post_id=post.id, comment_id=comment.id)}}" class="btn btn-danger">Delete</a>
                     {% endif %} 
                 </div>
             </div>

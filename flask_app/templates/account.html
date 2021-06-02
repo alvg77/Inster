@@ -6,6 +6,7 @@
             <div class="d-flex align-items-center">
                 <div class="image p-3"> 
                     <img src="{{ url_for('static', filename='profile_pics/' + user.profile_image) }}" class="rounded-circle" width="155" height="155" alt="pfp">
+                    
                 </div>
                 <div class="ml-3 w-100">
                     <h4 class="mb-0 mt-0">{{ user.username }}</h4>
@@ -138,7 +139,9 @@
                                             <small class="text-muted">{{ post.date_posted.strftime('%Y/%m/%d') }}</small>
                                         </h6>
                                         <h3 class="card-title"><a href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h3>
-                                        <p class="card-text"><p class="card-text">{{ post.content }}</p></p> 
+                                        <div class="border border-secondary rounded p-2">
+                                            <p class="card-text "><p class="card-text">{{ post.content }}</p></p> 
+                                        </div>
                                     </div>
                                 </div>
                             </div>
