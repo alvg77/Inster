@@ -39,9 +39,9 @@ def home():
 @login_required
 def search_post(searched, type):
     if type:
-        data = Posts.query.whooshee_search(str(searched)).order_by(Posts.id.desc()).all()
+        data = Posts.query.filter_by(title=searched).all()
     else:
-        data = User.query.whooshee_search(str(searched)).order_by(User.id.desc()).all()
+        data = User.query.fikter_by(username=searched).all()
         
     return render_template('search.html', data=data, type=type, title='Search')
 

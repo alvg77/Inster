@@ -4,12 +4,9 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
-from flask_whooshee import Whooshee
 import os
 
 app = Flask(__name__)
-whooshee = Whooshee(app)
-whooshee.reindex()
 app.config['SECRET_KEY'] = 'c78119002dc96180e56f64c789a7d732b74c83dd23d63be147'
 bcrypt = Bcrypt()
 db = SQLAlchemy(app)
