@@ -13,7 +13,7 @@ whooshee.reindex()
 app.config['SECRET_KEY'] = 'c78119002dc96180e56f64c789a7d732b74c83dd23d63be147'
 bcrypt = Bcrypt()
 db = SQLAlchemy(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:password@localhost:5432/flask"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://eqgsprtazfhnbi:89c9444f4f8a7564f9a4cc369e1a68cbcf016011c09078deee972bf3e5b4f14a@ec2-54-74-35-87.eu-west-1.compute.amazonaws.com:5432/dd7alhega9tlgs"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate = Migrate(app, db)
