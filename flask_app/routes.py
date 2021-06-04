@@ -138,7 +138,7 @@ def save_post_pic(image):
     random_hex = secrets.token_hex(8)
     _, extention = os.path.splitext(image.filename)
     filename = random_hex + extention
-    picture_path = os.path.join(app.root_path, 'static/post_pics', filename)
+    picture_path = os.path.join(app.root_path, 'static\\post_pics', filename)
 
     image = Image.open(image)
     image.save(picture_path)    
