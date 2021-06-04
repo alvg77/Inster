@@ -13,7 +13,7 @@ whooshee.reindex()
 app.config['SECRET_KEY'] = 'c78119002dc96180e56f64c789a7d732b74c83dd23d63be147'
 bcrypt = Bcrypt()
 db = SQLAlchemy(app)
-app.config['DATABASE_URL'] = "postgres://scfwamzchykekk:4424cf37b6f3f3772527a715202c6235ad7a540f139d9cd364e92e175f6ca483@ec2-176-34-222-188.eu-west-1.compute.amazonaws.com:5432/d22kk4t3urublg"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://scfwamzchykekk:4424cf37b6f3f3772527a715202c6235ad7a540f139d9cd364e92e175f6ca483@ec2-176-34-222-188.eu-west-1.compute.amazonaws.com:5432/d22kk4t3urublg"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate = Migrate(app, db)
