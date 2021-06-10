@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo
 from flask_login import current_user
 
 class SignupForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=20)])
+    username = StringField('Username', validators=[DataRequired(), Length(max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=25)])
     confirm = PasswordField('Password', validators=[DataRequired(), EqualTo('password')])
@@ -15,7 +15,12 @@ class SignupForm(FlaskForm):
     def validate_username(self, username):
         if User.query.filter_by(username=username.data).first():
             raise ValidationError("Username unavailable! Please choose a different one.")
-
+        
+        username = list(username.data)
+        for i in username:
+            if not i.isalpha() or i.isnumeric(): 
+                raise ValidationError("Username can contain only letters and numbers")
+    
     def validate_email(self, email):
         if User.query.filter_by(email=email.data).first():
             raise ValidationError("Email unavailable! Please choose a different one.")
@@ -31,7 +36,7 @@ class LoginForm(FlaskForm):
             raise ValidationError("No user with such email registered!")
         
 class EditAccountForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=20)])
+    username = StringField('Username', validators=[DataRequired(), Length(max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
     bio = TextAreaField('Bio', validators=[Length(max=200)])
     picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png', 'jpeg'])])
@@ -48,7 +53,7 @@ class EditAccountForm(FlaskForm):
                 raise ValidationError("Email unavailable! Please choose a different one.")    
 
 class PostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired(), Length(min=3, max=25)])
+    title = StringField('Title', validators=[DataRequired(), Length(max=25)])
     image = FileField('Image', validators=[FileAllowed(['jpg', 'png', 'jpeg'])])    
     content = TextAreaField('Content', validators=[DataRequired(), Length(max=200)])
     remove_img = SubmitField('Remove')
@@ -75,5 +80,5 @@ class ResetPasswordForm(FlaskForm):
     submit = SubmitField('Reset Password')
 
 class SearchForm(FlaskForm):
-    search = StringField('Search', validators=[Length(min=3)])
+    search = StringField('Search')
     submit = SubmitField('Search')

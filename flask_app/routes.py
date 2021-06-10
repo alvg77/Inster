@@ -33,16 +33,17 @@ def home():
     if form.validate_on_submit():        
         return redirect(url_for('search_post', searched=form.search.data, type=1))
     
-    return render_template('home.html',  title="Home", data=posts, form=form)
+    return render_template('content.html', heading='Posts', title="Home", type='post', data=posts, form=form)
 
 @app.route('/search/<searched>/<int:type>')
 @login_required
 def search_post(searched, type):
+    
     if type:
-        data = Posts.query.whooshee_search(str(searched)).order_by(Posts.id.desc()).all()
+        data = Posts.query.filter_by(title=searched).all()
     else:
-        data = User.query.whooshee_search(str(searched)).order_by(User.id.desc()).all()
-        
+        data = User.query.filter_by(username=searched).all()
+    
     return render_template('search.html', data=data, type=type, title='Search')
 
 @app.route('/people', methods=['POST', 'GET'])
@@ -54,7 +55,7 @@ def people():
     form = SearchForm()
     if form.validate_on_submit():
         return redirect(url_for('search_post', searched=form.search.data, type=0))
-    return render_template('people.html', users = users, form=form, title='People')
+    return render_template('content.html', type='users', data=users, form=form, title='People', all=True, heading='Followed Users', none_message="No users followed")
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -371,3 +372,27 @@ def unlike(post_id):
         return redirect(url_for('post', post_id=post_id))
     else:
         return redirect(url_for('home'))
+    
+@app.route("/user/<string:username>/followers")
+@login_required
+def followers(username):
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        abort(404)
+    else:
+        page = request.args.get('page', 1, type=int)
+        followers = user.followers.paginate(page=page, per_page=20)
+        
+        return render_template('people.html', users=followers, title='Followers', all=False, heading="Followers", none_message="This user has no followers")
+
+@app.route("/user/<string:username>/followed")
+@login_required
+def followed(username):
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        abort(404)
+    else:
+        page = request.args.get('page', 1, type=int)
+        followers = user.followed.paginate(page=page, per_page=20)
+        
+        return render_template('people.html', users=followers, title='Followers', all=False, heading="Followed", none_message="This user hasn't followed anyone")

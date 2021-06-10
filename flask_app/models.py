@@ -1,8 +1,8 @@
 from datetime import datetime
-from flask_app import db, login_manager, app, whooshee
+from flask_app import db, login_manager, app
 from itsdangerous import TimedJSONWebSignatureSerializer as sl
 from flask_login import UserMixin
-from flask_whooshee import AbstractWhoosheer, whoosh
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -13,7 +13,6 @@ followers = db.Table('followers',
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
 
-@whooshee.register_model('username')
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -71,7 +70,6 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.profile_image}')"
 
-@whooshee.register_model('title', 'content')
 class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)

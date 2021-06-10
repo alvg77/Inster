@@ -22,11 +22,11 @@
                             <span class="number1">{{num_of_posts}}</span> 
                         </div>
                         <div class="flex-column"> 
-                            <span class="fs-6">Followers:</span> 
+                            <span class="fs-6"><a class="text-white text-decoration-none" href="{{ url_for('followers', username=user.username) }}">Followers:</a></span> 
                             <span class="number2">{{ user.followers.count() }}</span> 
                         </div>
                         <div class="flex-column"> 
-                            <span class="fs-6">Following:</span> 
+                            <span class="fs-6"><a class="text-white text-decoration-none" href="{{ url_for('followed', username=user.username) }}">Followed: </a></span> 
                             <span class="number2">{{ user.followed.count() }}</span> 
                         </div>
                     </div>
