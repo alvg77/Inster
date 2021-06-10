@@ -2,4 +2,5 @@
 
 How to install
   * Be sure you have python installed
-  * Run this command: pip install -r requirements.txt
+  * Create a virtual environment and download the app in the same dorectory as the environment
+  * Run: \pip install -r requirements.txt\ in the terminal
