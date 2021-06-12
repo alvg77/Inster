@@ -1,5 +1,7 @@
 # Twistagram
 
-#How to install
-  *1. Have python3 installed on your local machine
-  *2. 
+How to install
+  * Be sure you have python installed
+  * Create a virtual environment and download the app in the same dorectory as the environment
+  * Open terminal and navigate to the folder where the software is downloaded
+  * Run: ```pip install -r requirements.txt```
