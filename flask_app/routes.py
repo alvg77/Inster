@@ -1,12 +1,13 @@
 import os
+import time
 import secrets
 from PIL import Image
-from flask_app.models import User, Posts, Comments
+from flask_app.models import User, Posts, Comments, Room, Messages
 from flask import render_template, flash, redirect, url_for, request, abort
 from flask_app.forms import (SignupForm, LoginForm, EditAccountForm,
                              PostForm, CommentsForm, ActionForm, RequestResetForm, 
                              ResetPasswordForm, SearchForm)
-from flask_app import app, db, bcrypt, mail
+from flask_app import app, db, bcrypt, mail, socketio
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 
@@ -16,7 +17,6 @@ def UserAuth(email, password):
         return True
     
     return False    
-    
 
 def UserSignUp(username, email, password):
     new_user = User(username=username, email=email, password=password)
@@ -31,13 +31,13 @@ def home():
     posts = current_user.followed_posts().paginate(page=page, per_page=8)
     form = SearchForm()
     if form.validate_on_submit():        
-        return redirect(url_for('search_post', searched=form.search.data, type=1))
+        return redirect(url_for('search', searched=form.search.data, type=1))
     
     return render_template('content.html', heading='Posts', title="Home", type='post', data=posts, form=form)
 
 @app.route('/search/<searched>/<int:type>')
 @login_required
-def search_post(searched, type):
+def search(searched, type):
     
     if type:
         data = Posts.query.filter_by(title=searched).all()
@@ -54,7 +54,7 @@ def people():
     
     form = SearchForm()
     if form.validate_on_submit():
-        return redirect(url_for('search_post', searched=form.search.data, type=0))
+        return redirect(url_for('search', searched=form.search.data, type=0))
     return render_template('content.html', type='users', data=users, form=form, title='People', all=True, heading='Followed Users', none_message="No users followed")
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -280,7 +280,6 @@ def follow(user_username):
     else:
         return redirect(url_for('home'))
 
-
 @app.route('/unfollow/<user_username>', methods=['POST', 'GET'])
 @login_required
 def unfollow(user_username):
@@ -382,8 +381,8 @@ def followers(username):
     else:
         page = request.args.get('page', 1, type=int)
         followers = user.followers.paginate(page=page, per_page=20)
-        
-        return render_template('people.html', users=followers, title='Followers', all=False, heading="Followers", none_message="This user has no followers")
+                
+        return render_template('content.html', form=None, data=followers, type='users', title='Followers', all=False, heading="Followers", none_message="This user has no followers")
 
 @app.route("/user/<string:username>/followed")
 @login_required
@@ -395,4 +394,36 @@ def followed(username):
         page = request.args.get('page', 1, type=int)
         followers = user.followed.paginate(page=page, per_page=20)
         
-        return render_template('people.html', users=followers, title='Followers', all=False, heading="Followed", none_message="This user hasn't followed anyone")
+        return render_template('content.html', form=None, data=followers, type='users', title='Followers', all=False, heading="Followed", none_message="This user hasn't followed anyone")
+
+# def create_room(user):
+#     new_room = Room()
+#     new_room.add_user(current_user)
+#     new_room.add_user(user)
+#     db.session.commit()
+
+# def enter_room(user):
+#     for i in Room.query.all():
+#         if current_user and user in i.users:
+#             return i
+#     create_room(user)
+    
+# @app.route('/message/<user_username>', methods=['POST', 'GET'])
+# @login_required
+# def message(user_username):
+#     form = ActionForm()        
+#     user = User.query.filter_by(username=user_username).first()
+#     if form.validate_on_submit():
+#         if user == None:
+#             flash(f"User {user_username} doesn't exist.", 'info')
+#             return redirect(url_for('home'))
+#         room = enter_room(user=user)
+#         return render_template('messages.html', username=current_user.username)
+#     elif user:
+#         return redirect(url_for('user', user_id=user.id))
+#     elif not user:
+#         flash("User does not exist!")
+#         return redirect('home')
+    
+
+

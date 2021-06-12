@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'c78119002dc96180e56f64c789a7d732b74c83dd23d63be147'
 bcrypt = Bcrypt()
 db = SQLAlchemy(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgres://zvwncnyv:To9iw34NW37vTZ5awvhX5XkKaXTNRM3W@rogue.db.elephantsql.com/zvwncnyv"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///site.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 login_manager = LoginManager(app)

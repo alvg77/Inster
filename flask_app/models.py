@@ -8,6 +8,11 @@ from flask_login import UserMixin
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# Chat = db.Table('Chat',
+#     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+#     db.Column('room_id', db.Integer, db.ForeignKey('room.id')),
+# )
+
 followers = db.Table('followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
@@ -97,3 +102,24 @@ class Likes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+
+# class Messages(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+#     message = db.Column(db.String(500), nullable=True)
+#     room_id = db.Column(db.Integer, db.ForeignKey('room.id'))
+    
+# class Room(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     messages = db.relationship('Messages', backref='messages', lazy=True)
+#     users = db.relationship('User', secondary=Chat, backref='user_rooms')
+
+#     def add_user(self, user):
+#         if not self.in_room(user):
+#             self.users.append(user)
+    
+#     def in_room(self, user):
+#         for i in self.users:
+#             if i == user:
+#                 return True
+#         return False
