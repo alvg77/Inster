@@ -32,11 +32,10 @@
                     </div>
                     {% if not user == current_user %}
                         <div class="button mt-2 d-flex flex-row align-items-center">
-                            <form class="w-100" action="{{ url_for('message', user_username=user.username) }}" method="POST">
+                            <!-- <form class="w-100" action="{{ url_for('message', user_username=user.username) }}" method="POST">
                                 {{ form.hidden_tag() }}
                                 {{ form.submit(value='Message', class='btn btn-outline-primary w-100 m-1 btn-sm ') }}
-                            </form>
-                            <!-- <button class="btn btn-sm btn-outline-primary w-100 m-1">Message</button>  -->
+                            </form> -->
                             {% if not current_user.is_following(user) %}
                                 <form class="w-100" action="{{ url_for('follow', user_username=user.username) }}" method="POST">
                                     {{ form.hidden_tag() }}

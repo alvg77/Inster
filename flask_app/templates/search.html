@@ -2,10 +2,10 @@
 
 {% block body %}
     {% if not data %}
-        <h1 class="text-danger">Search not found!</h1>
+        <h1 class="text-danger text-center">Search not found!</h1>
     {% else %}
         {% for i in data %}
-            {% if type %}
+            {% if type == 1 %}
                 <div class="card mt-3" style="width: 45rem;"> 
                     {% if i.post_image %}
                         <img src="{{ url_for('static', filename='post_pics/' + i.post_image) }}" class="card-img-top" alt="...">

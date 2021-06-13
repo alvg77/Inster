@@ -2,7 +2,8 @@ import os
 import time
 import secrets
 from PIL import Image
-from flask_app.models import User, Posts, Comments, Room, Messages
+from flask_app.models import User, Posts, Comments
+from flask_socketio import join_room, leave_room, send, emit
 from flask import render_template, flash, redirect, url_for, request, abort
 from flask_app.forms import (SignupForm, LoginForm, EditAccountForm,
                              PostForm, CommentsForm, ActionForm, RequestResetForm, 
@@ -39,11 +40,11 @@ def home():
 @login_required
 def search(searched, type):
     
-    if type:
+    if type == 1:
         data = Posts.query.filter_by(title=searched).all()
-    else:
+    elif type == 0:
         data = User.query.filter_by(username=searched).all()
-    
+        
     return render_template('search.html', data=data, type=type, title='Search')
 
 @app.route('/people', methods=['POST', 'GET'])
@@ -372,28 +373,27 @@ def unlike(post_id):
     else:
         return redirect(url_for('home'))
     
-@app.route("/user/<string:username>/followers")
+@app.route("/user/<string:username>/followers", methods=['POST', 'GET'])
 @login_required
 def followers(username):
     user = User.query.filter_by(username=username).first()
+    
     if not user:
         abort(404)
     else:
         page = request.args.get('page', 1, type=int)
-        followers = user.followers.paginate(page=page, per_page=20)
-                
+        followers = user.followers.paginate(page=page, per_page=20)         
         return render_template('content.html', form=None, data=followers, type='users', title='Followers', all=False, heading="Followers", none_message="This user has no followers")
-
-@app.route("/user/<string:username>/followed")
+@app.route("/user/<string:username>/followed", methods=['POST', 'GET'])
 @login_required
 def followed(username):
     user = User.query.filter_by(username=username).first()
+    
     if not user:
         abort(404)
     else:
         page = request.args.get('page', 1, type=int)
         followers = user.followed.paginate(page=page, per_page=20)
-        
         return render_template('content.html', form=None, data=followers, type='users', title='Followers', all=False, heading="Followed", none_message="This user hasn't followed anyone")
 
 # def create_room(user):
@@ -424,6 +424,3 @@ def followed(username):
 #     elif not user:
 #         flash("User does not exist!")
 #         return redirect('home')
-    
-
-
