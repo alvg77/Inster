@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
@@ -22,6 +21,5 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = "no1515783@gmail.com"
 app.config['MAIL_PASSWORD'] = 'qazwsxedc741852963'
 mail = Mail(app)
-socketio = SocketIO(app)
 
 from flask_app import routes
