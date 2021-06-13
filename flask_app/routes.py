@@ -8,7 +8,7 @@ from flask import render_template, flash, redirect, url_for, request, abort
 from flask_app.forms import (SignupForm, LoginForm, EditAccountForm,
                              PostForm, CommentsForm, ActionForm, RequestResetForm, 
                              ResetPasswordForm, SearchForm)
-from flask_app import app, db, bcrypt, mail, socketio
+from flask_app import app, db, bcrypt, mail
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 
@@ -395,32 +395,3 @@ def followed(username):
         page = request.args.get('page', 1, type=int)
         followers = user.followed.paginate(page=page, per_page=20)
         return render_template('content.html', form=None, data=followers, type='users', title='Followers', all=False, heading="Followed", none_message="This user hasn't followed anyone")
-
-# def create_room(user):
-#     new_room = Room()
-#     new_room.add_user(current_user)
-#     new_room.add_user(user)
-#     db.session.commit()
-
-# def enter_room(user):
-#     for i in Room.query.all():
-#         if current_user and user in i.users:
-#             return i
-#     create_room(user)
-    
-# @app.route('/message/<user_username>', methods=['POST', 'GET'])
-# @login_required
-# def message(user_username):
-#     form = ActionForm()        
-#     user = User.query.filter_by(username=user_username).first()
-#     if form.validate_on_submit():
-#         if user == None:
-#             flash(f"User {user_username} doesn't exist.", 'info')
-#             return redirect(url_for('home'))
-#         room = enter_room(user=user)
-#         return render_template('messages.html', username=current_user.username)
-#     elif user:
-#         return redirect(url_for('user', user_id=user.id))
-#     elif not user:
-#         flash("User does not exist!")
-#         return redirect('home')
