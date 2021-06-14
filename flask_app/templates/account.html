@@ -22,27 +22,23 @@
                             <span class="number1">{{num_of_posts}}</span> 
                         </div>
                         <div class="flex-column"> 
-                            <span class="fs-6"><a class="text-white text-decoration-none" href="{{ url_for('followers', username=user.username) }}">Followers:</a></span> 
+                            <span class="fs-6"><a class="text-white text-decoration-none" href="{{ url_for('users.followers', username=user.username) }}">Followers:</a></span> 
                             <span class="number2">{{ user.followers.count() }}</span> 
                         </div>
                         <div class="flex-column"> 
-                            <span class="fs-6"><a class="text-white text-decoration-none" href="{{ url_for('followed', username=user.username) }}">Followed: </a></span> 
+                            <span class="fs-6"><a class="text-white text-decoration-none" href="{{ url_for('users.followed', username=user.username) }}">Followed: </a></span> 
                             <span class="number2">{{ user.followed.count() }}</span> 
                         </div>
                     </div>
                     {% if not user == current_user %}
                         <div class="button mt-2 d-flex flex-row align-items-center">
-                            <!-- <form class="w-100" action="{{ url_for('message', user_username=user.username) }}" method="POST">
-                                {{ form.hidden_tag() }}
-                                {{ form.submit(value='Message', class='btn btn-outline-primary w-100 m-1 btn-sm ') }}
-                            </form> -->
                             {% if not current_user.is_following(user) %}
-                                <form class="w-100" action="{{ url_for('follow', user_username=user.username) }}" method="POST">
+                                <form class="w-100" action="{{ url_for('users.follow', user_username=user.username) }}" method="POST">
                                     {{ form.hidden_tag() }}
                                     {{ form.submit(value='Follow', class='btn btn-outline-primary w-100 m-1 btn-sm ') }}
                                 </form>
                             {% else %}
-                                <form class="w-100" action="{{ url_for('unfollow', user_username=user.username) }}" method="POST">
+                                <form class="w-100" action="{{ url_for('users.unfollow', user_username=user.username) }}" method="POST">
                                     {{ form.hidden_tag() }}
                                     {{ form.submit(value='Unfollow', class='btn btn-outline-danger w-100 m-1 btn-sm ') }}
                                 </form>
@@ -141,7 +137,7 @@
                                             <p class="mr-3">{{ post.author.username }}</p>
                                             <small class="text-muted">{{ post.date_posted.strftime('%Y/%m/%d') }}</small>
                                         </h6>
-                                        <h3 class="card-title"><a href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h3>
+                                        <h3 class="card-title"><a href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h3>
                                         <div class="border border-secondary rounded p-2">
                                             <p class="card-text "><p class="card-text">{{ post.content }}</p></p> 
                                         </div>

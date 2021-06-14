@@ -56,6 +56,6 @@
         </div>
     </form>
     {% if post %}
-        <form id='form2' action="{{ url_for('delete_img', post_id=post.id) }}" method="POST"></form>
+        <form id='form2' action="{{ url_for('posts.delete_img', post_id=post.id) }}" method="POST"></form>
     {% endif %}
 {% endblock %}
