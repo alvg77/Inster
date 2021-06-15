@@ -6,7 +6,7 @@
             <div class="col">
                 {% if type == 'post' %}
                     {% if not data.total %}
-                        <div class="card border-primary card-body text-primary" style="max-width: 35rem;">
+                        <div class="card border-secondary card-body text-secondary" style="max-width: 35rem;">
                             <p class="card-text h4">You have to be following other users in order to get content on your main page!</p>
                         </div>
                     {% else %}
@@ -63,8 +63,8 @@
                                 </div>  
                             {% endfor %}
                         {% else %}
-                            <div class="card p-2 border-primary" style="max-width: 15rem">
-                                <p class="card-text text-center text-primary">{{ none_message }}</p>
+                            <div class="card p-2 border-secondary" style="max-width: 15rem">
+                                <p class="card-text text-center text-secondary">{{ none_message }}</p>
                             </div>
                         {% endif %}
                     </div>
