@@ -1,6 +1,6 @@
 # Twistagram
 * PYTHON project for the end of the schoolyear
-How to install
+* How to install
   * Be sure you have python installed
   * Create a virtual environment and download the app in the same dorectory as the environment
   * Open terminal and navigate to the folder where the software is downloaded
