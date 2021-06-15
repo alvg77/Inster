@@ -24,10 +24,10 @@ def send_email_reset(user):
     msg = Message('Password Reset Request', 
                   sender='noreply@demo.com',
                   recipients=[user.email])
-    msg.body = f'''To reset your password, visit the following link:
+    msg.body = f'''To reset your password, click on the following link:
 {url_for('users.reset_token', token=token, _external=True)}
 
-If it wasn't you who made this password reset request ignore this email and no changes will be made.
+If it wasn't you who made this password reset request, simply ignore this email and no changes to your password will be made.
 '''
     mail.send(msg)
     
