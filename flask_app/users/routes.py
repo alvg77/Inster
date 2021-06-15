@@ -197,7 +197,10 @@ def unfollow(user_username):
 @login_required
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
-    print(user)
+    
+    picture_path = os.path.join(current_app.root_path, 'static/profile_pics', user.profile_image)
+    os.remove(picture_path)
+    
     for i in user.liked:
         db.session.delete(i)
     for i in user.comments:
