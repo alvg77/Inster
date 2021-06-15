@@ -64,9 +64,8 @@
                         {% else %}
                             <h3 class="text-secondary">{{ none_message }}</h3>
                         {% endif %}
-                </div>
-                {% endif %}
-                    
+                    </div>
+                {% endif %}        
             </div>
             {% if form %}
                 <div class="col">
@@ -84,7 +83,6 @@
                                 {% else %}
                                     {{ form.search(class="form-control", id="floatingInput", placeholder="search")}}
                                 {% endif %}
-
                                 {{ form.search.label(value="Search Posts", for="floatingInput", title='Enter post title') }}    
                             </div>
                             <div>
