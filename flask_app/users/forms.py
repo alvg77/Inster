@@ -65,7 +65,7 @@ class ResetPasswordForm(FlaskForm):
     submit = SubmitField('Reset Password')
     
 class SearchForm(FlaskForm):
-    search = StringField('Search')
+    search = StringField('Search', validators=[Length(min=3)])
     submit = SubmitField('Search')
     
 class ActionForm(FlaskForm):

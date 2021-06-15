@@ -73,9 +73,19 @@
                     <div class="content-section">
                         <form class="d-flex mt-3" method="POST">
                             {{ form.hidden_tag() }}
-                            <div class="form-floating mb-3">
-                                {{ form.search(class="form-control me-2", id="floatingInput", placeholder="name@example.com")}}
-                                {{ form.search.label(value="Search Posts", for="floatingInput", title='Enter post title') }}                                    
+                            <div class="form-floating mb-3">                                
+                                {% if form.search.errors %}
+                                    {{ form.search(class="form-control is-invalid", id="floatingInput", placeholder="search") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.search.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.search(class="form-control", id="floatingInput", placeholder="search")}}
+                                {% endif %}
+
+                                {{ form.search.label(value="Search Posts", for="floatingInput", title='Enter post title') }}    
                             </div>
                             <div>
                                 {{ form.submit(class="btn btn-outline-success", style="height: 57px;") }}
