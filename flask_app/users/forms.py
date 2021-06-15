@@ -16,10 +16,9 @@ class SignupForm(FlaskForm):
         if User.query.filter_by(username=username.data).first():
             raise ValidationError("Username unavailable! Please choose a different one.")
         
-        username = list(username.data)
-        for i in username:
-            if not i.isalpha() or i.isnumeric(): 
-                raise ValidationError("Username can contain only letters and numbers")
+        username = username.data
+        if not username.isalnum():
+            raise ValidationError("Username can contain only letters and numbers")
     
     def validate_email(self, email):
         if User.query.filter_by(email=email.data).first():

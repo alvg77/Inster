@@ -152,3 +152,43 @@ def reset_token(token):
         return redirect(url_for('users.login'))
         
     return render_template('reset.html', title='Reset Password', form=form)
+
+@users.route('/follow/<user_username>', methods=['POST', 'GET'])
+@login_required
+def follow(user_username):
+    form = ActionForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=user_username).first()
+        if user == None:
+            flash(f"User {user_username} doesn't exist.", 'info')
+            return redirect(url_for('main.home'))
+        if user == current_user:
+            flash('You cannot follow yourself!', 'danger')
+            return redirect(url_for('users.account'))
+        current_user.follow(user)
+        db.session.commit()
+        flash(f'You are now following {user.username}.', 'info')
+        return redirect(url_for('users.user', user_id=user.id))
+    else:
+        return redirect(url_for('main.home'))
+
+
+@users.route('/unfollow/<user_username>', methods=['POST', 'GET'])
+@login_required
+def unfollow(user_username):
+    form = ActionForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=user_username).first()
+        if user == None:
+            flash(f"User {user_username} doesn't exist.", 'info')
+            return redirect(url_for('main.home'))
+        if user == current_user:
+            flash('You cannot unfollow yourself!', 'danger')
+            return redirect(url_for('users.account'))
+        current_user.unfollow(user)
+        db.session.commit()
+        flash(f'You have unfollowed user {user.username}.', 'info')
+        
+        return redirect(url_for('users.user', user_id=user.id))
+    else:
+        return redirect(url_for('main.home'))
