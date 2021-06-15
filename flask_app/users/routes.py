@@ -192,3 +192,18 @@ def unfollow(user_username):
         return redirect(url_for('users.user', user_id=user.id))
     else:
         return redirect(url_for('main.home'))
+    
+@users.route('/<user_id>/delete_user/', methods=['POST', 'GET'])
+@login_required
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    for i in user.posts:
+        if i.post_image:
+            image_path = os.path.join(current_app.root_path, 'static/post_pics', i.post_image)
+            os.remove(image_path)
+        i.query.delete()
+    user.query.delete()
+    db.session.commit()
+    logout()
+    
+    return redirect(url_for('users.login'))

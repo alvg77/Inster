@@ -81,7 +81,7 @@ def delete_img(post_id):
         abort(403)
     picture_path = os.path.join(current_app.root_path, 'static/post_pics', post.post_image)
     os.remove(picture_path)
-    post.post_image = 'removed'
+    post.post_image = None
     db.session.commit()
     
     return redirect(url_for('posts.update_post', post_id=post_id))
