@@ -51,7 +51,11 @@
                                                     <a class="mr-3" href="{{ url_for('users.user', user_id=user.id) }}">{{ user.username }}</a>
                                                 </h3>
                                                 <span>Bio</span>
-                                                <p class="card-text p-2 mt border rounded-2" style="white-space: pre-wrap;">{{ user.bio }}</p>
+                                                {% if user.bio %}
+                                                    <p class="card-text p-2 mt border rounded-2" style="white-space: pre-wrap;">{{ user.bio }}</p>
+                                                {% else %}
+                                                    <p class="card-text p-2 mt border rounded-2 text-muted" style="white-space: pre-wrap;">No bio entered.</p>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>

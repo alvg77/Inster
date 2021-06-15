@@ -21,8 +21,8 @@ def home():
 def search(searched, type):
     
     if type == 1:
-        data = Posts.query.filter_by(title=searched).all()
+        data = Posts.query.whooshee_search(str(searched)).order_by(Posts.id.desc()).all()
     elif type == 0:
-        data = User.query.filter_by(username=searched).all()
+        data = User.query.whooshee_search(str(searched)).order_by(User.id.desc()).all()
         
     return render_template('search.html', data=data, type=type, title='Search')
