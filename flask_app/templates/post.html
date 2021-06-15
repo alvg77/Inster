@@ -58,7 +58,7 @@
                 
             <div class="form-floating mb-1">
                 {% if form.content.errors %}
-                {{ form.content(class="form-control is-invalid", id="floatingInput", placeholder="John Doe") }}
+                {{ form.content(class="form-control is-invalid", id="floatingInput", placeholder="Comment") }}
                 <div class="invalid-feedback">
                     {% for error in form.content.errors %}
                         <span>{{ error }}</span>
