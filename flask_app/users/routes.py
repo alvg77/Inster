@@ -198,6 +198,10 @@ def unfollow(user_username):
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     print(user)
+    for i in user.liked:
+        db.session.delete(i)
+    for i in user.comments:
+        db.session.delete(i)
     for i in user.posts:
         if i.post_image:
             image_path = os.path.join(current_app.root_path, 'static/post_pics', i.post_image)
@@ -205,10 +209,7 @@ def delete_user(user_id):
                 db.session.delete(j)
             os.remove(image_path)
         db.session.delete(i)
-    for i in user.comments:
-        db.session.delete(i)
-    for i in user.liked:
-        db.session.delete(i)
+    
     db.session.delete(user)
     db.session.commit()
     logout()
