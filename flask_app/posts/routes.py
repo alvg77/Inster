@@ -43,29 +43,25 @@ def post(post_id):
 @posts.route('/post/<int:post_id>/update', methods=['POST', 'GET'])
 @login_required
 def update_post(post_id):
+    form = PostForm()    
     post = Posts.query.get_or_404(post_id)
     if post.author != current_user:
         abort(403)
-    form = PostForm()
-    form.title.data = post.title
-    form.content.data = post.content
-    
-    if post.post_image == 'removed':
-            post.post_image = None  
-             
-    if form.validate_on_submit():
-        post.title = form.title.data
-        post.content = form.content.data
-
-        if form.image.data:
-            filename = save_post_pic(form.image.data)
-            if post.post_image:
-                os.remove(os.path.join(current_app.root_path, 'static/post_pics', post.post_image))
-            post.post_image = filename         
-        db.session.commit()
-        flash('Your post has been updated!', 'success')
-        
-        return redirect(url_for('posts.post', post_id=post.id))
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            post.title = form.title.data
+            print(form.title.data)
+            post.content = form.content.data
+            print(form.content.data)
+            if form.image.data:
+                filename = save_post_pic(form.image.data)
+                if post.post_image:
+                    os.remove(os.path.join(current_app.root_path, 'static/post_pics', post.post_image))
+                post.post_image = filename         
+            db.session.commit()
+            flash('Your post has been updated!', 'success')
+            
+            return redirect(url_for('posts.post', post_id=post.id))
     
     elif request.method == 'GET':      
         form.title.data = post.title

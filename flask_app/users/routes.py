@@ -197,12 +197,13 @@ def unfollow(user_username):
 @login_required
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
+    print(user)
     for i in user.posts:
         if i.post_image:
             image_path = os.path.join(current_app.root_path, 'static/post_pics', i.post_image)
             os.remove(image_path)
-        i.query.delete()
-    user.query.delete()
+        db.session.delete(i)
+    db.session.delete(user)
     db.session.commit()
     logout()
     
