@@ -5,9 +5,10 @@
         <div class="row">
             <div class="col">
                 {% if type == 'post' %}
-
                     {% if not data.total %}
-                        <h1 class="text-secondary">You have to be following other users in order to get content on your main page!</h1>
+                        <div class="card border-primary card-body text-primary" style="max-width: 35rem;">
+                            <p class="card-text h4">You have to be following other users in order to get content on your main page!</p>
+                        </div>
                     {% else %}
                         <h2>{{ heading }}</h2>
                         {% for post in data.items %}
@@ -62,7 +63,9 @@
                                 </div>  
                             {% endfor %}
                         {% else %}
-                            <h3 class="text-secondary">{{ none_message }}</h3>
+                            <div class="card p-2 border-primary" style="max-width: 15rem">
+                                <p class="card-text text-center text-primary">{{ none_message }}</p>
+                            </div>
                         {% endif %}
                     </div>
                 {% endif %}        
