@@ -1,11 +1,12 @@
 import os
+import secrets
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECRET_KEY = os.environ.get('SECRET_KEY', '-1')
+   
+    if SECRET_KEY == '-1':
+        SECRET_KEY = secrets.token_hex(15)
+        os.environ['SECRET_KEY'] = SECRET_KEY
+
     SQLALCHEMY_DATABASE_URI = "sqlite:///database/site.db"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    MAIL_SERVER = 'smtp.googlemail.com'
-    MAIL_PORT = 587
-    MAIL_USE_TLS = True
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')

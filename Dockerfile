@@ -1,12 +1,16 @@
 FROM python:3.8
 
-WORKDIR /app
-COPY . .
+RUN apt-get update
+RUN apt-get install -y python-pip python-dev build-essential
 
+WORKDIR /app
+
+ENV FLASK_APP=app.py
+ENV FLASK_RUN_HOST=0.0.0.0
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
-ENV SECRET_KEY="uwpwJprR9NhNN8OWg9rLTl6JLt2gnA"
-ENV MAIL_USERNAME="ttttest835@gmail.com"
-ENV MAIL_PASSWORD="AcihwbU3NWEsUQk"
+EXPOSE 5000
 
-CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+COPY . .
+
+CMD [ "flask", "run"]
