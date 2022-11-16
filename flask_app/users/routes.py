@@ -3,8 +3,7 @@ import os
 from flask_app.models import User
 from flask import current_app, render_template, flash, redirect, url_for, request, abort, Blueprint
 from flask_app.users.forms import (SignupForm, LoginForm, EditAccountForm,
-                              ActionForm, RequestResetForm, 
-                             ResetPasswordForm, SearchForm)
+                              ActionForm, SearchForm)
 from flask_app import db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
 users = Blueprint('users', __name__)
