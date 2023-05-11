@@ -1,4 +1,5 @@
-# Twistagram
+# Inster
+A social media web app written in python with the Flask microframework
 
 # To run tha app in docker:
  - Open a terminal (WSL2 if you use windows)
