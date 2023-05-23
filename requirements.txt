@@ -20,7 +20,7 @@ itsdangerous==2.0.1
 Jinja2==3.0.1
 Mako==1.1.4
 MarkupSafe==2.0.1
-Pillow==9.2.0
+Pillow==9.3.0
 psycopg2==2.8.6
 pycparser==2.20
 python-dateutil==2.8.1
